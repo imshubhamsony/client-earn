@@ -11,6 +11,7 @@ export function generateOTP() {
   });
 }
 
+
 export function verifyOTP(token, secret) {
   return speakeasy.totp.verify({
     secret,
