@@ -21,6 +21,7 @@ const limiter = rateLimit({
   message: { message: 'Too many requests. Please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.path === '/api/health', // don't rate-limit health checks
 });
 app.use(limiter);
 app.use(trackIP);
@@ -43,12 +44,15 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// Health check first (no auth, no DB) - used by Render and load balancers
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ ok: true, status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/users', userRoutes);
-
-app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 // In production, serve the React app (built files in server/public)
 if (process.env.NODE_ENV === 'production') {
