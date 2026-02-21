@@ -1,6 +1,7 @@
 # Render Blueprint - EarnTask
-# Deploy: Connect this repo at https://dashboard.render.com and use "New > Blueprint"
-# Add env vars (MONGODB_URI, JWT_SECRET, etc.) in the Dashboard after creating the service.
+# One deploy = CLIENT (frontend) + SERVER (Node API)
+# - Build: uses both folders — builds client (React) into server/public, then server runs
+# - Add env vars (MONGODB_URI, JWT_SECRET, CLIENT_URL) in the Dashboard after creating the service.
 
 services:
   - type: web
@@ -8,7 +9,8 @@ services:
     name: earntask
     rootDir: server
 
-    # Build runs from server/: installs client deps, builds client into server/public
+    # Step 1 (build): server/package.json "build" → client folder (npm ci + vite build) → output to server/public
+    # Step 2 (start): server runs Node app → serves /api/* and static frontend from server/public
     buildCommand: npm run build
     startCommand: npm start
 

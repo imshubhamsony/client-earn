@@ -2,6 +2,15 @@
 
 This guide walks you through deploying this project to [Render](https://render.com) using the included `render.yaml` Blueprint.
 
+**One deploy uses both folders:**
+
+| Folder   | Role |
+|----------|------|
+| **client/** | Frontend (React/Vite). Not deployed as a separate service. It is **built** during deploy; output goes to `server/public`. |
+| **server/** | Backend (Node/Express) + built frontend. **Runs** on Render. Serves API at `/api/*` and the React app from `server/public`. |
+
+So a single **Web Service** deploy: (1) builds the client and puts it inside the server, (2) starts the server. One URL serves both frontend and API.
+
 ---
 
 ## Prerequisites
@@ -44,8 +53,8 @@ This guide walks you through deploying this project to [Render](https://render.c
    Other vars (e.g. `JWT_EXPIRES_IN`, `SIGNUP_BONUS`, `TASK_REWARD`, `REFERRAL_BONUS`, `MIN_WITHDRAWAL`) are optional; defaults are in `server/.env.example`.
 
 7. Save. Render will redeploy if needed. The first deploy runs:
-   - **Build:** `npm run build && npm run build:server` (builds React into `server/public`, installs server deps).
-   - **Start:** `npm start` (runs the Node server; Render sets `PORT` automatically).
+   - **Build:** From `server/`, runs `npm run build` (builds **client** into `server/public`, then server deps are already installed by Render).
+   - **Start:** `npm start` (runs the **server**; Render sets `PORT` automatically).
 
 ---
 
@@ -53,15 +62,16 @@ This guide walks you through deploying this project to [Render](https://render.c
 
 If you prefer to create the service by hand:
 
-1. **New +** → **Web Service**.
+1. **New +** → **Web Service** (not Static Site).
 2. Connect the **client-earn** repo and select it.
 3. Configure:
+   - **Root Directory:** `server` (so both client and server are available as `../client` and `.`).
    - **Runtime:** Node.
-   - **Build Command:** `npm run build && npm run build:server`
+   - **Build Command:** `npm run build` (builds client into `server/public`, then server runs).
    - **Start Command:** `npm start`
    - **Instance type:** Free (or Starter/paid).
 4. Add the same **Environment** variables as in the table above.
-5. Create Web Service. Render will build and start the app.
+5. Create Web Service. Render will build and start the app (both client + server in one service).
 
 ---
 
@@ -79,19 +89,28 @@ If you prefer to create the service by hand:
 
 ---
 
-## 5. Free tier notes
+## 5. Troubleshooting
+
+**"Publish directory server/public does not exist!"**  
+This usually means the service is set up as a **Static Site**. This app must be a **Web Service** (Node.js). In the Render dashboard, check the service type; if it’s Static Site, create a new **Web Service** and use the repo’s `render.yaml` (Blueprint), or set **Root Directory** to `server`, **Build Command** to `npm run build`, and **Start Command** to `npm start`. The repo now includes `server/public` (with a `.gitkeep`) and the build creates it if missing.
+
+---
+
+## 6. Free tier notes
 
 - Service may spin down after ~15 minutes of no traffic; first request can be slow (cold start).
 - For always-on or better performance, use a paid plan (e.g. Starter).
 
 ---
 
-## Files used for Render
+## Files used for Render (both client + server)
 
-| File         | Purpose |
-|-------------|---------|
-| `render.yaml` | Blueprint: web service, build/start commands, health check, env var placeholders. |
-| `package.json` (root) | Scripts: `build`, `build:server`, `start`. |
+| File | Purpose |
+|------|---------|
+| `render.yaml` | Blueprint: one Web Service, build/start from `server/`, health check, env vars. |
+| `server/package.json` | Scripts: `build` (builds **client** into `server/public`), `start` (runs **server**). |
+| `client/` | Frontend source; used only at **build** time (output → `server/public`). |
+| `server/` | Backend source + built frontend; **runs** on Render. |
 | `server/.env.example` | Reference for env vars (do not put secrets in repo). |
 
 If you use a different branch, set the **Branch** in the Render service (or in the Blueprint’s `branch` field in `render.yaml`).
