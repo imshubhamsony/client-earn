@@ -24,7 +24,22 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 app.use(trackIP);
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+// CORS: allow frontend origin. Set CLIENT_URL on Render (e.g. https://client-earn.onrender.com).
+const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // same-origin or tools that don't send Origin
+      if (origin === allowedOrigin) return callback(null, true);
+      // On Render, if CLIENT_URL is not set, allow any *.onrender.com so same-origin works
+      if (process.env.NODE_ENV === 'production' && !process.env.CLIENT_URL && origin.endsWith('.onrender.com')) {
+        return callback(null, true);
+      }
+      callback(null, false);
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 

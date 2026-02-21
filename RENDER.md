@@ -94,6 +94,11 @@ If you prefer to create the service by hand:
 **"Publish directory server/public does not exist!"**  
 This usually means the service is set up as a **Static Site**. This app must be a **Web Service** (Node.js). In the Render dashboard, check the service type; if it’s Static Site, create a new **Web Service** and use the repo’s `render.yaml` (Blueprint), or set **Root Directory** to `server`, **Build Command** to `npm run build`, and **Start Command** to `npm start`. The repo now includes `server/public` (with a `.gitkeep`) and the build creates it if missing.
 
+**`/api/auth/admin/login` or other API calls fail (CORS / not working)**  
+- The endpoint is **POST** (not GET). Send JSON: `{ "email": "...", "password": "..." }`.
+- Set **CLIENT_URL** in Render to your app URL, e.g. `https://client-earn.onrender.com` (no trailing slash). The server was updated to allow `*.onrender.com` in production when CLIENT_URL is not set, but setting CLIENT_URL is recommended.
+- Ensure you have an admin user: run `node src/scripts/seedAdmin.js` locally with the same `MONGODB_URI` (and `ADMIN_EMAIL` / `ADMIN_PASSWORD` from `.env`) so an admin exists in the database.
+
 ---
 
 ## 6. Free tier notes
