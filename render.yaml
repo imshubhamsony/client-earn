@@ -1,0 +1,37 @@
+# Render Blueprint - EarnTask
+# Deploy: Connect this repo at https://dashboard.render.com and use "New > Blueprint"
+# Add env vars (MONGODB_URI, JWT_SECRET, etc.) in the Dashboard after creating the service.
+
+services:
+  - type: web
+    runtime: node
+    name: earntask
+    rootDir: server
+
+    # Build runs from server/: installs client deps, builds client into server/public
+    buildCommand: npm run build
+    startCommand: npm start
+
+    # Health check for zero-downtime deploys
+    healthCheckPath: /api/health
+
+    # Free tier (use starter or higher for production)
+    plan: free
+
+    # Environment variables - set secrets in Render Dashboard (Environment tab)
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Render sets PORT automatically; your app uses process.env.PORT
+      # Add these in Dashboard (Environment) - click "Add Environment Variable":
+      # - MONGODB_URI     (required) e.g. MongoDB Atlas connection string
+      # - JWT_SECRET      (required) e.g. openssl rand -hex 32
+      # - CLIENT_URL      (required) your Render URL, e.g. https://earntask.onrender.com
+      # - ADMIN_EMAIL    (optional) admin login email
+      # - ADMIN_PASSWORD (optional) admin password
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false
