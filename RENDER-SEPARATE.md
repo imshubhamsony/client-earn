@@ -59,7 +59,7 @@ You will get two URLs, for example:
 3. Configure:
    - **Name:** e.g. `client-earn`
    - **Root Directory:** `client`
-   - **Build Command:** `npm install --include=dev && npm run build:standalone`
+   - **Build Command:** `npm install --include=dev && npm run build`
    - **Publish Directory:** `dist`
 4. **Environment** variables (so the client knows where the API is):
 
@@ -93,7 +93,7 @@ You will get two URLs, for example:
 
 **Client (Static Site)**  
 - Root: `client`  
-- Build: `npm install && npm run build:standalone`  
+- Build: `npm install --include=dev && npm run build`  
 - Publish: `dist`  
 - Env: `VITE_API_URL=https://earntask-api.onrender.com`
 

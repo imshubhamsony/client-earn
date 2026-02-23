@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "build": "mkdir -p public && cd ../client && npm ci --include=dev && npm run build",
+    "build": "mkdir -p public && cd ../client && npm ci --include=dev && npm run build && cp -r dist/* ../server/public",
     "build:server": "npm ci",
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",

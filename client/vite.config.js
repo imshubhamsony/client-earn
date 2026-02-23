@@ -1,12 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// For separate deploy (static site): set VITE_BUILD_STANDALONE=1 so output goes to dist/
-const outDir = process.env.VITE_BUILD_STANDALONE ? 'dist' : '../server/public';
+// Build always outputs to dist/ (Render static site: publish dist; combined deploy: server copies dist → server/public)
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir,
+    outDir: 'dist',
     emptyOutDir: true,
   },
   server: {
