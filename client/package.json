@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node node_modules/vite/bin/vite.js build",
+    "build": "node node_modules/vite/bin/vite.js build --outDir dist",
     "build:standalone": "VITE_BUILD_STANDALONE=1 node node_modules/vite/bin/vite.js build",
     "preview": "vite preview"
   },

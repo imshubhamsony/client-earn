@@ -58,9 +58,9 @@ You will get two URLs, for example:
 2. Connect the **same** repo and select it.
 3. Configure:
    - **Name:** e.g. `client-earn`
-   - **Root Directory:** `client`
+   - **Root Directory:** `client` (must be `client`, not server)
    - **Build Command:** `npm install --include=dev && npm run build`
-   - **Publish Directory:** `dist`
+   - **Publish Directory:** `dist` (must be `dist`, **not** `public`)
 4. **Environment** variables (so the client knows where the API is):
 
    | Key | Value |
@@ -108,6 +108,10 @@ In the server Web Service → **Settings** → **Health Check Path**, set:
 ---
 
 ## Troubleshooting
+
+- **"Publish directory dist does not exist!"**  
+  - If **Root Directory** is **`client`**: Build outputs to `client/dist/`. Set **Publish Directory** to **`dist`**. Push latest code and redeploy (client build now uses `--outDir dist`).
+  - If **Root Directory** is **`server`**: Use **Publish Directory** **`dist`**. The server build script copies the client build into both `server/public` and `server/dist`, so `dist` will exist after build. Push latest code and redeploy.
 
 - **CORS errors in browser:** Set `CLIENT_URL` on the **server** to the exact client URL (no trailing slash), e.g. `https://client-earn.onrender.com`, then redeploy.
 - **API 404 / wrong URL:** Ensure the **client** has `VITE_API_URL` set to the **server** URL (no trailing slash). Rebuild and redeploy the client after changing it.
