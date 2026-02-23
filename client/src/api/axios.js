@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// When deployed separately (static site), set VITE_API_URL to your API origin (e.g. https://yourapp-api.onrender.com)
+const apiBase = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api` : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: apiBase,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 });

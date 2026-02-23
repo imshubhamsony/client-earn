@@ -54,8 +54,8 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/users', userRoutes);
 
-// In production, serve the React app (built files in server/public)
-if (process.env.NODE_ENV === 'production') {
+// In production, serve the React app (built files in server/public) unless API_ONLY is set (separate client deploy)
+if (process.env.NODE_ENV === 'production' && process.env.API_ONLY !== 'true') {
   const publicPath = path.join(__dirname, '..', 'public');
   app.use(express.static(publicPath));
   app.get('*', (req, res, next) => {
